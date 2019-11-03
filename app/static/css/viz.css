@@ -14,29 +14,42 @@ body {
 }
 
 .panel {
-  background-color: blue;
-  width: 20vw;
+  background-color: whitesmoke;
+  width: 70vw;
   display: flex;
   flex-direction: column;
 }
 
 #panel-right {
   flex: 1;
+  background-color: darkgrey;
 }
 
 .prob-box {
-  height: 70vh;
+  height: 80vh;
+  background-color: yellow;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 #bottom-right, #bottom-left {
-  opacity: .5;
-  background-color: whitesmoke;
+  background-color: red;
   flex: 1;
 }
 
+.probability {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+}
+
+.prob-box .statement { display: none; }
+.prob-box:hover .probability { display: none; }
+.prob-box:hover .statement { display: inline; }
 
 
 .hor-dragbar {
