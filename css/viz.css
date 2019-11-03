@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+body {
+  margin: 0px;
+}
+
+.drag-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.panel {
+  background-color: blue;
+  width: 20vw;
+  display: flex;
+  flex-direction: column;
+}
+
+#panel-right {
+  flex: 1;
+}
+
+.prob-box {
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#bottom-right, #bottom-left {
+  opacity: .5;
+  background-color: whitesmoke;
+  flex: 1;
+}
+
+
+
+.hor-dragbar {
+  padding: 8px;
+  cursor: row-resize;
+  background-color: silver;
+}
+
+.vert-dragbar {
+  padding: 8px;
+  cursor: col-resize;
+  background-color: grey;
+}
