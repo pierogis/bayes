@@ -10,7 +10,10 @@
 
 <div class="drag-container">
   <div class="panel" id="panel-left">
-    <span class="probability"></span>
+    <div class="panel-probability">
+      <span class="probability"></span>
+      <span class="statement">P(|!A)</span>
+    </div>
     <div class="prob-box" id="top-left">
       <span class="probability"></span>
       <span class="statement">P(A|R)</span>
@@ -23,7 +26,6 @@
   </div>
   <div class="vert-dragbar" id="middle-dragbar"></div>
   <div class="panel" id="panel-right">
-    <span class="probability"></span>
     <div class="prob-box" id="top-right">
       <span class="probability"></span>
       <span class="statement">P(!A|R)</span>
@@ -32,6 +34,10 @@
     <div class="prob-box" id="bottom-right">
       <span class="probability"></span>
       <span class="statement">P(!A|!R)</span>
+    </div>
+    <div class="panel-probability">
+      <span class="probability"></span>
+      <span class="statement">P(|A)</span>
     </div>
   </div>
 </div>
