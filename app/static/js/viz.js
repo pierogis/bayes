@@ -15,23 +15,14 @@ window.onload = function() {
   var boxes = [top_left, top_right, bottom_left, bottom_right]
   var left_side = [left.children[0], top_left, left_bar, bottom_left]
   var right_side = [right.children[3], top_right, right_bar, bottom_right]
-  var side_bars = [left_bar, right_bar]
-  var panels = [left, right]
+
   var total_space = 0
 
   var hoverWait
 
-  _c = 1.55
+  _c = 1.4
   _p = 10
   r = .001
-
-  function sleep(t) {
-    var now = new Date().getTime();
-
-    while (new Date().getTime() < now + t ) {
-
-    }
-  }
 
   function dragProbs(box1, box2) {
     total_space = 0
@@ -48,13 +39,13 @@ window.onload = function() {
     total_space = boxes[0].clientWidth * boxes[0].clientHeight + boxes[1].clientWidth * boxes[1].clientHeight
     for (i = 0; i < 2; i++) {
       space_share = (100 * (boxes[i].clientWidth * boxes[i].clientHeight) / total_space).toFixed(2) + "%"
-      boxes[i].children[0].innerHTML = space_share
+      boxes[i].children[0].children[0].innerHTML = space_share
     }
 
     total_space = boxes[2].clientWidth * boxes[2].clientHeight + boxes[3].clientWidth * boxes[3].clientHeight
     for (i = 2; i < 4; i++) {
       space_share = (100 * (boxes[i].clientWidth * boxes[i].clientHeight) / total_space).toFixed(2) + "%"
-      boxes[i].children[0].innerHTML = space_share
+      boxes[i].children[0].children[0].innerHTML = space_share
     }
   }
 
@@ -75,7 +66,7 @@ window.onload = function() {
     top_left.style.flex = a / (a+b)
     bottom_left.style.flex = b / (a+b)
 
-    dragProbs(top_left, bottom_left)
+    dragProbs(top_left.children[1], bottom_left.children[1])
   }
 
   function rightListener(e) {
@@ -85,7 +76,7 @@ window.onload = function() {
     top_right.style.flex = a / (a+b)
     bottom_right.style.flex = b / (a+b)
 
-    dragProbs(top_right, bottom_right)
+    dragProbs(top_right.children[1], bottom_right.children[1])
   }
 
   function hovering(e) {
@@ -144,21 +135,9 @@ window.onload = function() {
         right_side[0].children[0].style.display = "none"
         right_side[0].children[1].style.display = "inline"
       }
-      else {
-        if (bar == left_bar) {
-          top_s.children[1].innerHTML = "P(B|A)"
-          bot_s.children[1].innerHTML = "P(!B|A)"
-        }
-        else {
-          top_s.children[1].innerHTML = "P(B|!A)"
-          bot_s.children[1].innerHTML = "P(!B|!A)"
-        }
-      }
 
       requestAnimationFrame(holdTimer);
     }, 100);
-
-
   }
   function notHovering(e) {
     cancelAnimationFrame(timerID);
@@ -182,15 +161,6 @@ window.onload = function() {
       }
     }
 
-    if (bar == left_bar) {
-      top_s.children[1].innerHTML = "P(A|B)"
-      bot_s.children[1].innerHTML = "P(A|!B)"
-    }
-    else if (bar == right_bar) {
-      top_s.children[1].innerHTML = "P(!A|B)"
-      bot_s.children[1].innerHTML = "P(!A|!B)"
-    }
-
     requestAnimationFrame(releaseTimer);
   }
   function pressingDown(e) {
@@ -212,11 +182,13 @@ window.onload = function() {
       document.addEventListener("mousemove", midListener)
     }
     else {
-      dragProbs(top_s, bot_s)
-      top_s.children[0].style.display = "inline"
-      top_s.children[1].style.display = "none"
-      bot_s.children[0].style.display = "inline"
-      bot_s.children[1].style.display = "none"
+      dragProbs(top_s.children[1], bot_s.children[1])
+
+      top_s.children[1].children[0].style.display = "inline"
+      top_s.children[1].children[1].style.display = "none"
+      bot_s.children[1].children[0].style.display = "inline"
+      bot_s.children[1].children[1].style.display = "none"
+
       if (bar == left_bar) {
         document.addEventListener("mousemove", leftListener)
       }
@@ -238,18 +210,15 @@ window.onload = function() {
       document.removeEventListener("mousemove", midListener)
     }
     else {
-      top_s.children[0].style.display = "none"
-      top_s.children[1].style.display = "inline"
-      bot_s.children[0].style.display = "none"
-      bot_s.children[1].style.display = "inline"
+      top_s.children[1].children[0].style.display = "none"
+      top_s.children[1].children[1].style.display = "inline"
+      bot_s.children[1].children[0].style.display = "none"
+      bot_s.children[1].children[1].style.display = "inline"
+
       if (bar == left_bar) {
-        top_s.children[1].innerHTML = "P(A|B)"
-        bot_s.children[1].innerHTML = "P(A|!B)"
         document.removeEventListener("mousemove", leftListener)
       }
       else if (bar == right_bar) {
-        top_s.children[1].innerHTML = "P(!A|B)"
-        bot_s.children[1].innerHTML = "P(!A|!B)"
         document.removeEventListener("mousemove", rightListener)
       }
     }
@@ -272,22 +241,44 @@ window.onload = function() {
         left_side[0].children[1].style.opacity = (1 - 1/f / 5)
         right_side[0].children[1].style.opacity = (1 - 1/f / 5)
 
-        left_side[1].children[1].style.opacity = (1 - f / 5)
-        left_side[3].children[1].style.opacity = (1 - f / 5)
-        right_side[1].children[1].style.opacity = (1 - f / 5)
-        right_side[3].children[1].style.opacity = (1 - f / 5)
+        left_side[1].children[0].children[1].style.opacity = (1 - f / 5)
+        left_side[3].children[0].children[1].style.opacity = (1 - f / 5)
+        right_side[1].children[0].children[1].style.opacity = (1 - f / 5)
+        right_side[3].children[0].children[1].style.opacity = (1 - f / 5)
 
         dragProbs(left_side[0], right_side[0])
       }
       else {
+        // fling in oppposite panel
         panel_o.style.flex = f
         bar_o.style.padding = _p * (1 - f / 10) + "px"
 
+        // fade in opposite panel statement
         side_o[0].children[1].style.opacity = (1 - 1/f / 5)
 
-        top_o.children[1].style.opacity = (1 - f / 5)
-        bot_o.children[1].style.opacity = (1 - f / 5)
-        dragProbs(top_s, bot_s)
+        // opposite side fade out statements
+        top_o.children[0].children[1].style.opacity = (1 - f / 5)
+        bot_o.children[0].children[1].style.opacity = (1 - f / 5)
+
+        // same side fade in/out probs
+        top_s.children[1].children[0].style.opacity = (1 - 10/f / 10)
+        bot_s.children[1].children[0].style.opacity = (1 - 10/f / 10)
+
+        top_s.children[0].children[0].style.opacity = (1 - f)
+        bot_s.children[0].children[0].style.opacity = (1 - f)
+
+        // same side fade in/out statements
+        top_s.children[1].children[1].style.opacity = (1 - 10/f / 10)
+        bot_s.children[1].children[1].style.opacity = (1 - 10/f / 10)
+
+        top_s.children[0].children[1].style.opacity = (1 - f)
+        bot_s.children[0].children[1].style.opacity = (1 - f)
+
+        // fling in evidence boxes
+        top_s.children[1].style.flex = f
+        bot_s.children[1].style.flex = f
+
+        dragProbs(top_s.children[1], bot_s.children[1])
       }
       timerID = requestAnimationFrame(holdTimer);
     }
@@ -313,7 +304,21 @@ window.onload = function() {
         panel_o.style.flex = 10000
         bar_o.style.padding = 0
 
-        dragProbs(top_s, bot_s)
+        top_s.children[1].style.flex = 10000
+        bot_s.children[1].style.flex = 10000
+
+        side_o[0].children[1].style.opacity = 1
+
+        top_o.children[0].children[1].style.opacity = 0
+        bot_o.children[0].children[1].style.opacity = 0
+
+        top_s.children[1].children[1].style.opacity = 1
+        bot_s.children[1].children[1].style.opacity = 1
+
+        top_s.children[0].children[1].style.opacity = 0
+        bot_s.children[0].children[1].style.opacity = 0
+
+        dragProbs(top_s.children[1], bot_s.children[1])
       }
       f = 300
     }
@@ -333,10 +338,10 @@ window.onload = function() {
         left_side[0].children[1].style.opacity = (1 - 1/r / 5)
         right_side[0].children[1].style.opacity = (1 - 1/r / 5)
 
-        left_side[1].children[1].style.opacity = (1 - r / 5)
-        left_side[3].children[1].style.opacity = (1 - r / 5)
-        right_side[1].children[1].style.opacity = (1 - r / 5)
-        right_side[3].children[1].style.opacity = (1 - r / 5)
+        left_side[1].children[0].children[1].style.opacity = (1 - r / 5)
+        left_side[3].children[0].children[1].style.opacity = (1 - r / 5)
+        right_side[1].children[0].children[1].style.opacity = (1 - r / 5)
+        right_side[3].children[0].children[1].style.opacity = (1 - r / 5)
       }
       else {
         panel_o.style.flex = r
@@ -344,8 +349,27 @@ window.onload = function() {
 
         side_o[0].children[1].style.opacity = (1 - 1/r / 5)
 
-        top_o.children[1].style.opacity = (1 - r / 5)
-        bot_o.children[1].style.opacity = (1 - r / 5)
+        // opposite side fade in statements
+        top_o.children[0].children[1].style.opacity = (1 - r / 5)
+        bot_o.children[0].children[1].style.opacity = (1 - r / 5)
+
+        // same side fade out/in probs
+        top_s.children[1].children[0].style.opacity = (1 - 10/r / 10)
+        bot_s.children[1].children[0].style.opacity = (1 - 10/r / 10)
+
+        top_s.children[0].children[0].style.opacity = (1 - r)
+        bot_s.children[0].children[0].style.opacity = (1 - r)
+
+        // same side fade out/in statements
+        top_s.children[1].children[1].style.opacity = (1 - 10/r / 10)
+        bot_s.children[1].children[1].style.opacity = (1 - 10/r / 10)
+
+        top_s.children[0].children[1].style.opacity = (1 - r)
+        bot_s.children[0].children[1].style.opacity = (1 - r)
+
+        // fling out evidence boxes
+        top_s.children[1].style.flex = r
+        bot_s.children[1].style.flex = r
 
         releaseProbs()
       }
@@ -373,6 +397,20 @@ window.onload = function() {
       else {
         panel_o.style.flex = 0
         bar_o.style.padding = _p + "px"
+
+        top_s.children[1].style.flex = 0
+        bot_s.children[1].style.flex = 0
+
+        side_o[0].children[1].style.opacity = 0
+
+        top_o.children[0].children[1].style.opacity = 1
+        bot_o.children[0].children[1].style.opacity = 1
+
+        top_s.children[1].children[1].style.opacity = 0
+        bot_s.children[1].children[1].style.opacity = 0
+
+        top_s.children[0].children[1].style.opacity = 1
+        bot_s.children[0].children[1].style.opacity = 1
 
         mid_bar.addEventListener("mouseenter", hovering)
         bar_o.addEventListener("mouseenter", hovering)

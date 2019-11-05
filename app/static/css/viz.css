@@ -5,7 +5,7 @@
 
 body {
   margin: 0px;
-  color: #FFEC7D;
+  color: azure;
   font-family: "Trebuchet MS", Helvetica, sans-serif;
   font-size: 1.8em;
   font-weight: bold;
@@ -18,16 +18,19 @@ body {
 }
 
 .panel {
-  background-color: grey;
-  flex: .3;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+#panel-left {
+  background-color: #BEE3CA;
+  flex: .3;
+}
+
 #panel-right {
   flex: .7;
-  background-color: silver;
+  background-color: #E49D9F;
 }
 
 .panel-probability {
@@ -37,7 +40,12 @@ body {
   align-items: center;
 }
 
-.prob-box {
+.box {
+  display: flex;
+  justify-content: center;
+}
+
+.prob-statement {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,22 +53,58 @@ body {
 
 #top-left {
   flex: .8;
-  background-color: #C86834;
+}
+
+#bottom-left {
+  flex: .2;
 }
 
 #top-right {
   flex: .7;
-  background-color: #FF8C4D;
-}
-
-#bottom-left {
-  background-color: #165C82;
-  flex: .2;
 }
 
 #bottom-right {
-  background-color: #2A7BA7;
   flex: .3;
+}
+
+#tl-a {
+  flex: 1;
+  background-color: #DD9069;
+}
+
+#tr-a {
+  flex: 1;
+  background-color: #ECA985;
+}
+
+#bl-a {
+  background-color: #7DB4D2;
+  flex: 1;
+}
+
+#br-a {
+  background-color: #5B9BBE;
+  flex: 1;
+}
+
+#tl-b {
+  flex: 0;
+  background-color: rgb(160,160,160);
+}
+
+#tr-b {
+  flex: 0;
+  background-color: rgb(180,180,180);
+}
+
+#bl-b {
+  background-color: rgb(90,90,90);
+  flex: 0;
+}
+
+#br-b {
+  background-color: rgb(130,130,130);
+  flex: 0;
 }
 
 .statement, .probability {
@@ -73,23 +117,26 @@ body {
   padding: 0px 10px;
 }
 
-.prob-box .probability { display: none; }
-.prob-box:hover .probability { display: inline; }
-.prob-box:hover .statement { display: none; }
+.box .probability { display: none; }
+.box:hover .probability { display: inline; }
+.box:hover .statement { display: none; }
 
 
 .hor-dragbar {
   padding: 10px;
   cursor: row-resize;
-  background-color: silver;
+}
+
+#right-dragbar {
+  background-color: rgb(160,160,160);
 }
 
 #left-dragbar {
-  background-color: grey;
+  background-color: rgb(180,180,180);
 }
 
 .vert-dragbar {
   padding: 10px;
   cursor: col-resize;
-  background-color: whitesmoke;
+  background-color: azure;
 }
