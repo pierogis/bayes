@@ -5,7 +5,7 @@
 
 body {
   margin: 0px;
-  color: azure;
+  color: #FAF3DD;
   font-family: "Trebuchet MS", Helvetica, sans-serif;
   font-size: 1.8em;
   font-weight: bold;
@@ -24,13 +24,13 @@ body {
 }
 
 #panel-left {
-  background-color: #BEE3CA;
-  flex: .3;
+  background-color: #F2B8C5;
+  flex: .4;
 }
 
 #panel-right {
-  flex: .7;
-  background-color: #E49D9F;
+  flex: .6;
+  background-color: #8DA8C8;
 }
 
 .panel-probability {
@@ -52,38 +52,38 @@ body {
 }
 
 #top-left {
-  flex: .8;
-}
-
-#bottom-left {
-  flex: .2;
-}
-
-#top-right {
   flex: .7;
 }
 
-#bottom-right {
+#bottom-left {
   flex: .3;
+}
+
+#top-right {
+  flex: .4;
+}
+
+#bottom-right {
+  flex: .6;
 }
 
 #tl-a {
   flex: 1;
-  background-color: #DD9069;
+  background-color: #8FC0A9;
 }
 
 #tr-a {
   flex: 1;
-  background-color: #ECA985;
+  background-color: #7DBAC0;
 }
 
 #bl-a {
-  background-color: #7DB4D2;
+  background-color: #EDB090;
   flex: 1;
 }
 
 #br-a {
-  background-color: #5B9BBE;
+  background-color: #E49D9F;
   flex: 1;
 }
 
@@ -138,5 +138,5 @@ body {
 .vert-dragbar {
   padding: 10px;
   cursor: col-resize;
-  background-color: azure;
+  background-color: #FAF3DD;
 }
