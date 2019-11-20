@@ -20,10 +20,11 @@ window.onload = function() {
 
   var hoverWait
 
-  _c = 1.4
-  _p = 10
+  _C = 1.4
+  _P = 10
   r = .001
 
+  // calculate and show the relative sizes of two divs
   function dragProbs(box1, box2) {
     total_space = 0
     total_space += box1.clientWidth * box1.clientHeight + box2.clientWidth * box2.clientHeight
@@ -35,6 +36,7 @@ window.onload = function() {
     box2.children[0].innerHTML = space_share
   }
 
+  // calculate the bayes results for all 4 prob boxes
   function releaseProbs() {
     total_space = boxes[0].clientWidth * boxes[0].clientHeight + boxes[1].clientWidth * boxes[1].clientHeight
     for (i = 0; i < 2; i++) {
@@ -49,6 +51,7 @@ window.onload = function() {
     }
   }
 
+  // pointer movement tracker and box size updaters
   function midListener(e) {
     a = (e.pageX - mid_bar.offsetWidth / 2)
     b = window.innerWidth - (e.pageX + mid_bar.offsetWidth / 2)
@@ -80,6 +83,8 @@ window.onload = function() {
   }
 
   function hovering(e) {
+    cancelAnimationFrame(timerID);
+
     bar = e.target
 
     f = r
@@ -115,14 +120,12 @@ window.onload = function() {
       side_o = left_side
     }
 
-    cancelAnimationFrame(timerID);
+    mid_bar.removeEventListener("pointerenter", hovering, false)
+    left_bar.removeEventListener("pointerenter", hovering, false)
+    right_bar.removeEventListener("pointerenter", hovering, false)
 
-    mid_bar.removeEventListener("mouseenter", hovering, false)
-    left_bar.removeEventListener("mouseenter", hovering, false)
-    right_bar.removeEventListener("mouseenter", hovering, false)
-
-    bar.addEventListener("mousedown", pressingDown)
-    bar.addEventListener("mouseleave", notHovering)
+    bar.addEventListener("pointerdown", clicking)
+    bar.addEventListener("pointerleave", notHovering)
 
     f = r
 
@@ -144,10 +147,10 @@ window.onload = function() {
 
     clearTimeout(hoverWait)
 
-    bar.removeEventListener("mousedown", pressingDown)
-    bar.removeEventListener("mouseleave", notHovering)
+    bar.removeEventListener("pointerdown", clicking)
+    bar.removeEventListener("pointerleave", notHovering)
 
-    bar.addEventListener("mouseenter", hovering)
+    bar.addEventListener("pointerenter", hovering)
 
     r = f
 
@@ -163,14 +166,14 @@ window.onload = function() {
 
     requestAnimationFrame(releaseTimer);
   }
-  function pressingDown(e) {
-    mid_bar.removeEventListener("mouseenter", hovering)
-    left_bar.removeEventListener("mouseenter", hovering)
-    right_bar.removeEventListener("mouseenter", hovering)
+  function clicking(e) {
+    mid_bar.removeEventListener("pointerenter", hovering)
+    left_bar.removeEventListener("pointerenter", hovering)
+    right_bar.removeEventListener("pointerenter", hovering)
 
-    bar.addEventListener("mouseup", notPressingDown)
-    bar.removeEventListener("mousedown", pressingDown)
-    bar.removeEventListener("mouseleave", notHovering)
+    bar.addEventListener("pointerup", notClicking)
+    bar.removeEventListener("pointerdown", clicking)
+    bar.removeEventListener("pointerleave", notHovering)
 
     if (bar == mid_bar) {
       // cross fade statement for prob
@@ -179,7 +182,7 @@ window.onload = function() {
       right_side[0].children[0].style.display = "inline"
       right_side[0].children[1].style.display = "none"
       dragProbs(left_side[0], right_side[0])
-      document.addEventListener("mousemove", midListener)
+      document.addEventListener("pointermove", midListener)
     }
     else {
       dragProbs(top_s.children[1], bot_s.children[1])
@@ -190,16 +193,16 @@ window.onload = function() {
       bot_s.children[1].children[1].style.display = "none"
 
       if (bar == left_bar) {
-        document.addEventListener("mousemove", leftListener)
+        document.addEventListener("pointermove", leftListener)
       }
       else if (bar == right_bar) {
-        document.addEventListener("mousemove", rightListener)
+        document.addEventListener("pointermove", rightListener)
       }
     }
   }
 
-  function notPressingDown(e) {
-    bar.addEventListener("mousedown", pressingDown)
+  function notClicking(e) {
+    bar.addEventListener("pointerdown", clicking)
 
     if (bar == mid_bar) {
       left_side[0].children[0].style.display = "none"
@@ -207,7 +210,7 @@ window.onload = function() {
       right_side[0].children[0].style.display = "none"
       right_side[0].children[1].style.display = "inline"
 
-      document.removeEventListener("mousemove", midListener)
+      document.removeEventListener("pointermove", midListener)
     }
     else {
       top_s.children[1].children[0].style.display = "none"
@@ -216,27 +219,31 @@ window.onload = function() {
       bot_s.children[1].children[1].style.display = "inline"
 
       if (bar == left_bar) {
-        document.removeEventListener("mousemove", leftListener)
+        document.removeEventListener("pointermove", leftListener)
       }
       else if (bar == right_bar) {
-        document.removeEventListener("mousemove", rightListener)
+        document.removeEventListener("pointermove", rightListener)
       }
     }
 
-    bar.addEventListener("mouseleave", notHovering)
-    bar.removeEventListener("mouseup", notPressingDown)
+    bar.addEventListener("pointerleave", notHovering)
+    bar.removeEventListener("pointerup", notClicking)
   }
 
   function holdTimer() {
+    other()
+  }
+
+  function other() {
     if (f < 300) {
 
-      f = f*_c
+      f = f*_C
 
       if (bar == mid_bar) {
         left_side[0].style.flex = f
         right_side[0].style.flex = f
-        left_bar.style.padding = _p * (1 - f / 10) + "px"
-        right_bar.style.padding = _p * (1 - f / 10) + "px"
+        left_bar.style.padding = _P * (1 - f / 10) + "px"
+        right_bar.style.padding = _P * (1 - f / 10) + "px"
 
         left_side[0].children[1].style.opacity = (1 - 1/f / 5)
         right_side[0].children[1].style.opacity = (1 - 1/f / 5)
@@ -251,7 +258,7 @@ window.onload = function() {
       else {
         // fling in oppposite panel
         panel_o.style.flex = f
-        bar_o.style.padding = _p * (1 - f / 10) + "px"
+        bar_o.style.padding = _P * (1 - f / 10) + "px"
 
         // fade in opposite panel statement
         side_o[0].children[1].style.opacity = (1 - 1/f / 5)
@@ -327,13 +334,13 @@ window.onload = function() {
   function releaseTimer() {
     if (r > 0.001) {
 
-      r = r/_c
+      r = r/_C
 
       if (bar == mid_bar) {
         left_side[0].style.flex = r
         right_side[0].style.flex = r
-        left_bar.style.padding = _p * (1 - r / 10) + "px"
-        right_bar.style.padding = _p * (1 - r / 10) + "px"
+        left_bar.style.padding = _P * (1 - r / 10) + "px"
+        right_bar.style.padding = _P * (1 - r / 10) + "px"
 
         left_side[0].children[1].style.opacity = (1 - 1/r / 5)
         right_side[0].children[1].style.opacity = (1 - 1/r / 5)
@@ -345,7 +352,7 @@ window.onload = function() {
       }
       else {
         panel_o.style.flex = r
-        bar_o.style.padding = _p * (1 - r / 10) + "px"
+        bar_o.style.padding = _P * (1 - r / 10) + "px"
 
         side_o[0].children[1].style.opacity = (1 - 1/r / 5)
 
@@ -388,15 +395,15 @@ window.onload = function() {
       if (bar == mid_bar) {
         left_side[0].style.flex = 0
         right_side[0].style.flex = 0
-        left_bar.style.padding = _p + "px"
-        right_bar.style.padding = _p + "px"
+        left_bar.style.padding = _P + "px"
+        right_bar.style.padding = _P + "px"
 
-        left_bar.addEventListener("mouseenter", hovering)
-        right_bar.addEventListener("mouseenter", hovering)
+        left_bar.addEventListener("pointerenter", hovering)
+        right_bar.addEventListener("pointerenter", hovering)
       }
       else {
         panel_o.style.flex = 0
-        bar_o.style.padding = _p + "px"
+        bar_o.style.padding = _P + "px"
 
         top_s.children[1].style.flex = 0
         bot_s.children[1].style.flex = 0
@@ -412,8 +419,8 @@ window.onload = function() {
         top_s.children[0].children[1].style.opacity = 1
         bot_s.children[0].children[1].style.opacity = 1
 
-        mid_bar.addEventListener("mouseenter", hovering)
-        bar_o.addEventListener("mouseenter", hovering)
+        mid_bar.addEventListener("pointerenter", hovering)
+        bar_o.addEventListener("pointerenter", hovering)
       }
 
       releaseProbs()
@@ -429,7 +436,11 @@ window.onload = function() {
 
   releaseProbs()
 
-  mid_bar.addEventListener("mouseenter", hovering)
-  left_bar.addEventListener("mouseenter", hovering)
-  right_bar.addEventListener("mouseenter", hovering)
+  mid_bar.addEventListener("pointerenter", hovering)
+  left_bar.addEventListener("pointerenter", hovering)
+  right_bar.addEventListener("pointerenter", hovering)
+
+  // mid_bar.addEventListener("touchstart", touching)
+  // left_bar.addEventListener("touchstart", touching)
+  // right_bar.addEventListener("touchstart", touching)
 }
