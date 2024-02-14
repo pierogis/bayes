@@ -1,0 +1,14 @@
+* {
+	box-sizing: border-box;
+	overflow: hidden;
+	-webkit-transform: translateZ(0);
+}
+
+body {
+	margin: 0px;
+	color: #faf3dd;
+	font-family: 'Trebuchet MS', Helvetica, sans-serif;
+	font-size: 1.8em;
+	font-weight: bold;
+	touch-action: none;
+}
