@@ -1,36 +1,38 @@
 <script lang="ts">
-	export let topFlex: number;
-	export let bottomFlex: number;
-	export let showA: boolean;
-	export let showPanel: boolean;
-	export let showProbs: boolean;
+	export let leftFlex: number;
+	export let rightFlex: number;
+	export let showPanelProbs: boolean;
+	export let showLeftPanel: boolean;
+	export let showRightPanel: boolean;
 
 	export let bg: string;
 
-	const horizontalBarAction = (node: HTMLDivElement) => {
+	const midBarAction = (node: HTMLDivElement) => {
 		let hoverWait: ReturnType<typeof setTimeout>;
 		const pointerEnter = () => {
 			node.addEventListener('pointerdown', pointerDown);
 			node.addEventListener('pointerleave', pointerLeave);
+			node.removeEventListener('pointerenter', pointerEnter);
 
 			hoverWait = setTimeout(() => {
-				showA = false;
-				showPanel = true;
+				showLeftPanel = true;
+				showRightPanel = true;
 			}, 100);
 		};
-		const pointerLeave = async () => {
+		const pointerLeave = () => {
 			clearTimeout(hoverWait);
 
-			showPanel = false;
-			showA = true;
+			showLeftPanel = false;
+			showRightPanel = false;
 
 			node.addEventListener('pointerenter', pointerEnter);
+			node.removeEventListener('pointerleave', pointerLeave);
 		};
 
-		const pointerDown = async () => {
-			showPanel = true;
-			showProbs = true;
-			showA = false;
+		const pointerDown = () => {
+			showLeftPanel = true;
+			showRightPanel = true;
+			showPanelProbs = true;
 
 			node.removeEventListener('pointerenter', pointerEnter);
 			node.removeEventListener('pointerleave', pointerLeave);
@@ -38,14 +40,14 @@
 			window.addEventListener('pointerup', pointerUp);
 		};
 		const pointerMove = (e: PointerEvent) => {
-			const a = e.pageY - node.offsetHeight / 2;
-			const b = window.innerHeight - (e.pageY + node.offsetHeight / 2);
+			const a = e.pageX - node.offsetWidth / 2;
+			const b = window.innerWidth - (e.pageX + node.offsetWidth / 2);
 
-			topFlex = a / (a + b);
-			bottomFlex = b / (a + b);
+			leftFlex = a / (a + b);
+			rightFlex = b / (a + b);
 		};
-		const pointerUp = async () => {
-			showProbs = false;
+		const pointerUp = () => {
+			showPanelProbs = false;
 
 			node.addEventListener('pointerleave', pointerLeave);
 			window.removeEventListener('pointermove', pointerMove);
@@ -55,11 +57,11 @@
 	};
 </script>
 
-<div use:horizontalBarAction style:background-color={bg}></div>
+<div use:midBarAction style:background-color={bg}></div>
 
 <style>
 	div {
 		padding: 10px;
-		cursor: row-resize;
+		cursor: col-resize;
 	}
 </style>
