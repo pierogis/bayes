@@ -3,7 +3,7 @@
 	import { fly } from 'svelte/transition';
 	import { linear } from 'svelte/easing';
 
-	interface Props {
+	type Props = {
 		flex: number;
 		prob: number;
 		statement: string;

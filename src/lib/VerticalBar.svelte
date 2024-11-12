@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
 
-	interface Props {
+	type Props = {
 		grabbingOther: boolean;
 		grabbing: boolean;
 		leftFlex: number;
@@ -10,7 +10,7 @@
 		showLeftPanel: boolean;
 		showRightPanel: boolean;
 		bg: string;
-	}
+	};
 
 	let {
 		grabbingOther,

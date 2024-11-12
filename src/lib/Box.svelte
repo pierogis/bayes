@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
 
-	interface Props {
+	type Props = {
 		flex: number;
 		showA: boolean;
 		a: {
@@ -15,7 +15,7 @@
 			bg: string;
 		};
 		showProbs: boolean;
-	}
+	};
 
 	let { flex, showA, a, b, showProbs }: Props = $props();
 
