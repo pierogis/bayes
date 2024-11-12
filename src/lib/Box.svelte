@@ -1,7 +1,12 @@
 <script lang="ts">
 	import type { Action } from 'svelte/action';
 
+	import type { Visualization } from './builder';
+
 	type Props = {
+		box: Visualization['elements']['box'];
+		position: { x: 'left' | 'right'; y: 'top' | 'bottom' };
+
 		flex: number;
 		showA: boolean;
 		a: {
@@ -17,29 +22,10 @@
 		showProbs: boolean;
 	};
 
-	let { flex, showA, a, b, showProbs }: Props = $props();
-
-	const boxAction: Action<HTMLDivElement> = (node) => {
-		const pointerEnter = () => {
-			showProbs = true;
-		};
-		const pointerLeave = async () => {
-			showProbs = false;
-		};
-
-		node.addEventListener('pointerenter', pointerEnter);
-		node.addEventListener('pointerleave', pointerLeave);
-
-		return {
-			destroy: () => {
-				node.removeEventListener('pointerenter', pointerEnter);
-				node.removeEventListener('pointerleave', pointerLeave);
-			}
-		};
-	};
+	let { box, position, flex, showA, a, b, showProbs }: Props = $props();
 </script>
 
-<div use:boxAction class="box" style:flex>
+<div {...$box(position)} use:box class="box" style:flex>
 	<div
 		class="prob-statement"
 		class:a={showA}

@@ -3,7 +3,11 @@
 	import { fly } from 'svelte/transition';
 	import { linear } from 'svelte/easing';
 
+	import type { Visualization } from './builder';
+
 	type Props = {
+		panel: Visualization['elements']['panel'];
+		position: { x: 'left' | 'right' };
 		flex: number;
 		prob: number;
 		statement: string;
@@ -11,14 +15,15 @@
 		showPanel: boolean;
 		showPanelProbs: boolean;
 		children?: Snippet<[{ showA: boolean }]>;
-	}
+	};
 
-	let { flex, prob, statement, bg, showPanel, showPanelProbs, children }: Props = $props();
+	let { panel, position, flex, prob, statement, bg, showPanel, showPanelProbs, children }: Props =
+		$props();
 
 	let showA = true;
 </script>
 
-<div class="panel" style:flex style:--bg={bg}>
+<div {...$panel(position)} use:panel class="panel" style:flex style:--bg={bg}>
 	{#if !showPanel}
 		<div transition:fly={{ y: 0, duration: 500, delay: 500 }} class="panel-boxes">
 			{@render children?.({ showA })}
