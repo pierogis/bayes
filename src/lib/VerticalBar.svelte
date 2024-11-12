@@ -1,67 +1,96 @@
 <script lang="ts">
-	export let leftFlex: number;
-	export let rightFlex: number;
-	export let showPanelProbs: boolean;
-	export let showLeftPanel: boolean;
-	export let showRightPanel: boolean;
+	import type { Action } from 'svelte/action';
 
-	export let bg: string;
+	interface Props {
+		grabbingOther: boolean;
+		grabbing: boolean;
+		leftFlex: number;
+		rightFlex: number;
+		showPanelProbs: boolean;
+		showLeftPanel: boolean;
+		showRightPanel: boolean;
+		bg: string;
+	}
 
-	const midBarAction = (node: HTMLDivElement) => {
-		let hoverWait: ReturnType<typeof setTimeout>;
+	let {
+		grabbingOther,
+		grabbing = $bindable(false),
+		leftFlex = $bindable(),
+		rightFlex = $bindable(),
+		showPanelProbs = $bindable(),
+		showLeftPanel = $bindable(),
+		showRightPanel = $bindable(),
+		bg
+	}: Props = $props();
+
+	const midBarAction: Action<HTMLButtonElement> = (node) => {
 		const pointerEnter = () => {
-			node.addEventListener('pointerdown', pointerDown);
-			node.addEventListener('pointerleave', pointerLeave);
-			node.removeEventListener('pointerenter', pointerEnter);
-
-			hoverWait = setTimeout(() => {
+			if (!grabbingOther) {
 				showLeftPanel = true;
 				showRightPanel = true;
-			}, 100);
+			}
 		};
 		const pointerLeave = () => {
-			clearTimeout(hoverWait);
-
-			showLeftPanel = false;
-			showRightPanel = false;
-
-			node.addEventListener('pointerenter', pointerEnter);
-			node.removeEventListener('pointerleave', pointerLeave);
+			if (!grabbing) {
+				showLeftPanel = false;
+				showRightPanel = false;
+			}
 		};
-
 		const pointerDown = () => {
-			showLeftPanel = true;
-			showRightPanel = true;
-			showPanelProbs = true;
+			if (!grabbingOther) {
+				showLeftPanel = true;
+				showRightPanel = true;
+				showPanelProbs = true;
 
-			node.removeEventListener('pointerenter', pointerEnter);
-			node.removeEventListener('pointerleave', pointerLeave);
-			window.addEventListener('pointermove', pointerMove);
-			window.addEventListener('pointerup', pointerUp);
+				grabbing = true;
+			}
 		};
 		const pointerMove = (e: PointerEvent) => {
-			const a = e.pageX - node.offsetWidth / 2;
-			const b = window.innerWidth - (e.pageX + node.offsetWidth / 2);
+			if (grabbing && !grabbingOther) {
+				const a = e.pageX - node.offsetWidth / 2;
+				const b = window.innerWidth - (e.pageX + node.offsetWidth / 2);
 
-			leftFlex = a / (a + b);
-			rightFlex = b / (a + b);
+				leftFlex = a / (a + b);
+				rightFlex = b / (a + b);
+			}
 		};
 		const pointerUp = () => {
-			showPanelProbs = false;
+			if (grabbing && !grabbingOther) {
+				showPanelProbs = false;
 
-			node.addEventListener('pointerleave', pointerLeave);
-			window.removeEventListener('pointermove', pointerMove);
+				grabbing = false;
+			}
 		};
 
 		node.addEventListener('pointerenter', pointerEnter);
+		node.addEventListener('pointerdown', pointerDown);
+		window.addEventListener('pointerup', pointerUp);
+		window.addEventListener('pointermove', pointerMove);
+		node.addEventListener('pointerleave', pointerLeave);
+
+		return {
+			destroy: () => {
+				node.removeEventListener('pointerenter', pointerEnter);
+				node.removeEventListener('pointerdown', pointerDown);
+				window.removeEventListener('pointerup', pointerUp);
+				window.removeEventListener('pointermove', pointerMove);
+				node.removeEventListener('pointerleave', pointerLeave);
+			}
+		};
 	};
 </script>
 
-<div use:midBarAction style:background-color={bg}></div>
+<button use:midBarAction style:background-color={bg} aria-label="Adjust A and !A ratio"></button>
 
 <style>
-	div {
+	button {
+		border: none;
 		padding: 10px;
 		cursor: col-resize;
+
+		transition: opacity 200ms;
+	}
+	button:hover {
+		opacity: 0.5;
 	}
 </style>

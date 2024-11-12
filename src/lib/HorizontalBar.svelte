@@ -1,65 +1,105 @@
 <script lang="ts">
-	export let topFlex: number;
-	export let bottomFlex: number;
-	export let showA: boolean;
-	export let showPanel: boolean;
-	export let showProbs: boolean;
+	import type { Action } from 'svelte/action';
 
-	export let bg: string;
+	interface Props {
+		grabbingOther: boolean;
+		grabbing: boolean;
+		topFlex: number;
+		bottomFlex: number;
+		showA: boolean;
+		showPanel: boolean;
+		showProbs: boolean;
+		bg: string;
+	}
 
-	const horizontalBarAction = (node: HTMLDivElement) => {
-		let hoverWait: ReturnType<typeof setTimeout>;
-		const pointerEnter = () => {
-			node.addEventListener('pointerdown', pointerDown);
-			node.addEventListener('pointerleave', pointerLeave);
+	let {
+		grabbingOther,
+		grabbing = $bindable(false),
+		topFlex = $bindable(),
+		bottomFlex = $bindable(),
+		showA = $bindable(),
+		showPanel = $bindable(),
+		showProbs = $bindable(),
+		bg
+	}: Props = $props();
 
-			hoverWait = setTimeout(() => {
+	const horizontalBarAction: Action<HTMLButtonElement> = (node) => {
+		const pointerEnter = (e: PointerEvent) => {
+			if (!grabbingOther) {
+				console.log('pointer enter');
 				showA = false;
 				showPanel = true;
-			}, 100);
+			}
 		};
-		const pointerLeave = async () => {
-			clearTimeout(hoverWait);
-
-			showPanel = false;
-			showA = true;
-
-			node.addEventListener('pointerenter', pointerEnter);
+		const pointerLeave = async (e: PointerEvent) => {
+			if (!grabbing && !grabbingOther) {
+				console.log('pointer leave');
+				showPanel = false;
+				showA = true;
+			}
 		};
 
-		const pointerDown = async () => {
-			showPanel = true;
-			showProbs = true;
-			showA = false;
+		const pointerDown = async (e: PointerEvent) => {
+			if (!grabbingOther) {
+				console.log('pointer down');
+				showPanel = true;
+				showProbs = true;
+				showA = false;
 
-			node.removeEventListener('pointerenter', pointerEnter);
-			node.removeEventListener('pointerleave', pointerLeave);
-			window.addEventListener('pointermove', pointerMove);
-			window.addEventListener('pointerup', pointerUp);
+				grabbing = true;
+			}
 		};
 		const pointerMove = (e: PointerEvent) => {
-			const a = e.pageY - node.offsetHeight / 2;
-			const b = window.innerHeight - (e.pageY + node.offsetHeight / 2);
+			if (grabbing && !grabbingOther) {
+				const a = e.pageY - node.offsetHeight / 2;
+				const b = window.innerHeight - (e.pageY + node.offsetHeight / 2);
 
-			topFlex = a / (a + b);
-			bottomFlex = b / (a + b);
+				topFlex = a / (a + b);
+				bottomFlex = b / (a + b);
+			}
 		};
 		const pointerUp = async () => {
-			showProbs = false;
+			if (grabbing && !grabbingOther) {
+				console.log('pointer up');
+				showProbs = false;
 
-			node.addEventListener('pointerleave', pointerLeave);
-			window.removeEventListener('pointermove', pointerMove);
+				grabbing = false;
+			}
 		};
 
 		node.addEventListener('pointerenter', pointerEnter);
+		node.addEventListener('pointerdown', pointerDown);
+		window.addEventListener('pointerup', pointerUp);
+		window.addEventListener('pointermove', pointerMove);
+		node.addEventListener('pointerleave', pointerLeave);
+
+		return {
+			destroy: () => {
+				node.removeEventListener('pointerenter', pointerEnter);
+				node.removeEventListener('pointerdown', pointerDown);
+				window.removeEventListener('pointerup', pointerUp);
+				window.removeEventListener('pointermove', pointerMove);
+				node.removeEventListener('pointerleave', pointerLeave);
+			}
+		};
 	};
 </script>
 
-<div use:horizontalBarAction style:background-color={bg}></div>
+<button
+	use:horizontalBarAction
+	style:background-color={bg}
+	aria-label="Adjust conditional probability ratio"
+></button>
 
 <style>
-	div {
+	button {
+		border: none;
 		padding: 10px;
 		cursor: row-resize;
+
+		transition: opacity 200ms;
+	}
+	button:hover {
+		opacity: 0.5;
 	}
 </style>

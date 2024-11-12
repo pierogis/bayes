@@ -1,25 +1,27 @@
 <script lang="ts">
 	import { Panel, VerticalBar, HorizontalBar, Box } from '$lib';
 
-	let showLeftPanel = false;
-	let showRightPanel = false;
+	let grabbingLeft = $state(false);
+	let grabbingMiddle = $state(false);
+	let grabbingRight = $state(false);
 
-	let showA = true;
+	let showLeftPanel = $state(false);
+	let showRightPanel = $state(false);
 
-	let showLeftProbs = false;
-	let showPanelProbs = false;
-	let showRightProbs = false;
+	let showA = $state(true);
 
-	export let defaultFlex:
-		| Partial<{
-				left: number;
-				right: number;
-				topLeft: number;
-				bottomLeft: number;
-				topRight: number;
-				bottomRight: number;
-		  }>
-		| undefined = undefined;
+	let showLeftProbs = $state(false);
+	let showPanelProbs = $state(false);
+	let showRightProbs = $state(false);
+
+	type Props = {
+		left?: number;
+		right?: number;
+		topLeft?: number;
+		bottomLeft?: number;
+		topRight?: number;
+		bottomRight?: number;
+	};
 
 	let {
 		left = 0.6,
@@ -28,18 +30,18 @@
 		bottomLeft = 0.3,
 		topRight = 0.2,
 		bottomRight = 0.8
-	} = defaultFlex || {};
+	}: Props = $props();
 
-	$: A = left / (left + right);
-	$: notA = right / (left + right);
-	$: A_B = (topLeft * left) / (topLeft * left + topRight * right);
-	$: B_A = topLeft / (topLeft + bottomLeft);
-	$: notB_A = bottomLeft / (topLeft + bottomLeft);
-	$: A_notB = (bottomLeft * left) / (bottomLeft * left + bottomRight * right);
-	$: notA_B = (topRight * right) / (topLeft * left + topRight * right);
-	$: notA_notB = (bottomRight * right) / (bottomLeft * left + bottomRight * right);
-	$: B_notA = topRight / (topRight + bottomRight);
-	$: notB_notA = bottomRight / (topRight + bottomRight);
+	let A = $derived(left / (left + right));
+	let notA = $derived(right / (left + right));
+	let A_B = $derived((topLeft * left) / (topLeft * left + topRight * right));
+	let B_A = $derived(topLeft / (topLeft + bottomLeft));
+	let notB_A = $derived(bottomLeft / (topLeft + bottomLeft));
+	let A_notB = $derived((bottomLeft * left) / (bottomLeft * left + bottomRight * right));
+	let notA_B = $derived((topRight * right) / (topLeft * left + topRight * right));
+	let notA_notB = $derived((bottomRight * right) / (bottomLeft * left + bottomRight * right));
+	let B_notA = $derived(topRight / (topRight + bottomRight));
+	let notB_notA = $derived(bottomRight / (topRight + bottomRight));
 </script>
 
 <div>
@@ -60,6 +62,8 @@
 		></Box>
 
 		<HorizontalBar
+			grabbingOther={grabbingMiddle || grabbingRight}
+			bind:grabbing={grabbingLeft}
 			bind:topFlex={topLeft}
 			bind:bottomFlex={bottomLeft}
 			bind:showA
@@ -78,6 +82,8 @@
 	</Panel>
 
 	<VerticalBar
+		grabbingOther={grabbingLeft || grabbingRight}
+		bind:grabbing={grabbingMiddle}
 		bind:leftFlex={left}
 		bind:rightFlex={right}
 		bind:showPanelProbs
@@ -103,6 +109,8 @@
 		></Box>
 
 		<HorizontalBar
+			grabbingOther={grabbingLeft || grabbingMiddle}
+			bind:grabbing={grabbingRight}
 			bind:topFlex={topRight}
 			bind:bottomFlex={bottomRight}
 			bind:showA

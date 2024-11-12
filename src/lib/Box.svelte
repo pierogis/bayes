@@ -1,35 +1,58 @@
 <script lang="ts">
-	export let flex: number;
-	export let showA: boolean;
+	import type { Action } from 'svelte/action';
 
-	export let a: {
-		prob: number;
-		statement: string;
-		bg: string;
-	};
-	export let b: {
-		prob: number;
-		statement: string;
-		bg: string;
-	};
+	interface Props {
+		flex: number;
+		showA: boolean;
+		a: {
+			prob: number;
+			statement: string;
+			bg: string;
+		};
+		b: {
+			prob: number;
+			statement: string;
+			bg: string;
+		};
+		showProbs: boolean;
+	}
 
-	export let showProbs: boolean;
+	let { flex, showA, a, b, showProbs }: Props = $props();
+
+	const boxAction: Action<HTMLDivElement> = (node) => {
+		const pointerEnter = () => {
+			showProbs = true;
+		};
+		const pointerLeave = async () => {
+			showProbs = false;
+		};
+
+		node.addEventListener('pointerenter', pointerEnter);
+		node.addEventListener('pointerleave', pointerLeave);
+
+		return {
+			destroy: () => {
+				node.removeEventListener('pointerenter', pointerEnter);
+				node.removeEventListener('pointerleave', pointerLeave);
+			}
+		};
+	};
 </script>
 
-<div class="box" style:flex>
-	{#if showA}
-		<div class="prob-statement a" style:background-color={a.bg}>
-			<span class="probability">{(100 * a.prob).toFixed(2)}%</span>
-			<span class="statement">{a.statement}</span>
-		</div>
-	{:else}
-		<div class="prob-statement b" style:background-color={b.bg}>
-			<span class="probability" style:display={showProbs ? 'inline' : 'none'}>
-				{(100 * b.prob).toFixed(2)}%
-			</span>
-			<span class="statement" style:display={showProbs ? 'none' : 'inline'}>{b.statement}</span>
-		</div>
-	{/if}
+<div use:boxAction class="box" style:flex>
+	<div
+		class="prob-statement"
+		class:a={showA}
+		class:b={!showA}
+		style:--bg-a={a.bg}
+		style:--bg-b={b.bg}
+	>
+		{#if showProbs}
+			<span class="probability">{(100 * (showA ? a.prob : b.prob)).toFixed(2)}%</span>
+		{:else}
+			<span class="statement">{showA ? a.statement : b.statement}</span>
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -38,28 +61,21 @@
 		justify-content: center;
 	}
 
-	.probability {
-		display: none;
-	}
-	.statement {
-		display: inline;
-	}
-
-	.box:hover > .prob-statement > .probability {
-		display: inline;
-	}
-	.box:hover > .prob-statement > .statement {
-		display: none;
-	}
-
 	.prob-statement {
+		flex: 1;
+
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		transition: background-color 200ms 500ms;
 	}
 
-	.a,
+	.a {
+		background-color: var(--bg-a);
+	}
+
 	.b {
-		flex: 1;
+		background-color: var(--bg-b);
 	}
 </style>

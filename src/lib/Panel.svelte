@@ -1,49 +1,65 @@
 <script lang="ts">
-	export let flex: number;
-	export let prob: number;
-	export let statement: string;
+	import type { Snippet } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import { linear } from 'svelte/easing';
 
-	export let bg: string;
+	interface Props {
+		flex: number;
+		prob: number;
+		statement: string;
+		bg: string;
+		showPanel: boolean;
+		showPanelProbs: boolean;
+		children?: Snippet<[{ showA: boolean }]>;
+	}
 
-	export let showPanel: boolean;
-	export let showPanelProbs: boolean;
+	let { flex, prob, statement, bg, showPanel, showPanelProbs, children }: Props = $props();
 
 	let showA = true;
 </script>
 
-<div class="panel right" style:flex style:--bg={bg}>
+<div class="panel" style:flex style:--bg={bg}>
 	{#if !showPanel}
-		<slot {showA} />
+		<div transition:fly={{ y: 0, duration: 500, delay: 500 }} class="panel-boxes">
+			{@render children?.({ showA })}
+		</div>
 	{:else}
-		<div class="panel-probability">
-			<span class="probability" style:display={showPanelProbs ? 'inline' : 'none'}>
-				{(100 * prob).toFixed(2)}%
-			</span>
-			<span class="statement" style:display={showPanelProbs ? 'none' : 'inline'}>{statement}</span>
+		<div transition:fly={{ y: 0, duration: 500, delay: 500 }} class="panel-probability">
+			{#if showPanelProbs}
+				<span class="probability">
+					{(100 * prob).toFixed(2)}%
+				</span>
+			{:else}
+				<span class="statement">{statement}</span>
+			{/if}
 		</div>
 	{/if}
 </div>
 
 <style>
 	.panel {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+		display: grid;
+		grid-template-columns: auto;
+		grid-template-rows: auto;
 	}
 
 	.panel-probability {
-		flex: 1;
+		grid-column: 1 / span 1;
+		grid-row: 1 / span 1;
+
 		display: flex;
+		flex-direction: row-reverse;
 		justify-content: center;
 		align-items: center;
 		background-color: var(--bg);
 	}
+	.panel-boxes {
+		grid-column: 1 / span 1;
+		grid-row: 1 / span 1;
 
-	.probability {
-		display: none;
-	}
-	.statement {
-		display: inline;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
 	.statement,
